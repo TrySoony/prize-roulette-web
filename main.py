@@ -7,6 +7,7 @@ import os
 from config import config
 from api_routes import router as api_router
 from database import init_db
+from init_db import init_prizes
 
 # Настройка логирования
 logging.basicConfig(
@@ -57,6 +58,7 @@ async def startup_event():
     """Инициализация при запуске приложения"""
     try:
         await init_db()
+        await init_prizes()
         logger.info("Database initialized successfully")
     except Exception as e:
         logger.error(f"Error initializing database: {e}")

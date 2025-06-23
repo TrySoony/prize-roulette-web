@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 from database import get_db, Database
 from models import Prize, UserPrize
@@ -8,17 +8,25 @@ from models import Prize, UserPrize
 router = APIRouter(prefix="/api", tags=["api"])
 
 class SpinResult(BaseModel):
-    prize_id: int
     name: str
-    image_url: str
-    description: str
+    img: str
+    starPrice: int
+    description: Optional[str] = None
 
-@router.get("/prizes/{user_id}", response_model=List[Prize])
+@router.get("/prizes/{user_id}", response_model=List[SpinResult])
 async def get_user_prizes(user_id: int, db: Database = Depends(get_db)):
     """Получение списка призов пользователя"""
     try:
         prizes = await db.get_user_prizes(user_id)
-        return prizes
+        return [
+            SpinResult(
+                name=prize.name,
+                img=prize.image_url,
+                starPrice=prize.star_price,
+                description=prize.description
+            )
+            for prize in prizes
+        ]
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -52,9 +60,9 @@ async def spin_roulette(user_id: int, db: Database = Depends(get_db)):
         )
         
         return SpinResult(
-            prize_id=prize.id,
             name=prize.name,
-            image_url=prize.image_url,
+            img=prize.image_url,
+            starPrice=prize.star_price,
             description=prize.description
         )
     except HTTPException as e:
