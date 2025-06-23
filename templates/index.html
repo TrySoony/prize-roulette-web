@@ -14,21 +14,43 @@
             <img src="{{ url_for('assets', path='neko_helmet.png') }}" alt="Logo" style="width: 40px; height: 40px;">
             Крутите рулетку!
         </h1>
-        
-        <div class="attempts-info">
-            Осталось попыток: <span id="attempts-left">0</span>
+        <div class="tab-content active" data-tab="roulette">
+            <div class="attempts-info">
+                Осталось попыток: <span id="attempts-left">0</span>
+            </div>
+            <div class="roulette-container">
+                <div class="pointer"></div>
+                <div id="roulette" class="roulette"></div>
+            </div>
+            <button id="spin" class="spin-button">Крутить!</button>
+            <div id="error-message" class="error-message" style="display: none;"></div>
         </div>
-
-        <div class="roulette-container">
-            <div class="pointer"></div>
-            <div id="roulette" class="roulette"></div>
+        <div class="tab-content" data-tab="gifts" style="display:none;">
+            <h2>Мои подарки</h2>
+            <div id="gifts-list"></div>
         </div>
-
-        <button id="spin" class="spin-button">Крутить!</button>
-        
-        <div id="error-message" class="error-message" style="display: none;"></div>
+        <div class="tab-content" data-tab="info" style="display:none;">
+            <h2>Информация</h2>
+            <p>Вы можете крутить рулетку 2 раза. Все ваши призы будут отображаться на вкладке "Мои подарки".<br>Для получения приза напишите боту команду <b>/withdraw</b>.</p>
+            <button id="back-to-bot" class="spin-button">Вернуться в бота</button>
+        </div>
     </div>
-
+    <div class="tabs-container">
+        <div class="bottom-tabs">
+            <button class="tab-btn active" data-tab="roulette">
+                <span class="tab-icon">🎰</span>
+                Рулетка
+            </button>
+            <button class="tab-btn" data-tab="gifts">
+                <span class="tab-icon">🎁</span>
+                Мои подарки
+            </button>
+            <button class="tab-btn" data-tab="info">
+                <span class="tab-icon">ℹ️</span>
+                Информация
+            </button>
+        </div>
+    </div>
     <!-- Модальное окно для выигрыша -->
     <div id="win-modal-overlay" class="modal-overlay">
         <div class="modal-content">
@@ -38,7 +60,6 @@
             <button id="win-modal-btn">Супер!</button>
         </div>
     </div>
-
     <!-- Модальное окно для информации о выводе -->
     <div id="withdraw-info-modal-overlay" class="modal-overlay">
         <div class="modal-content">
@@ -51,34 +72,25 @@
             <button id="withdraw-info-btn">Понятно</button>
         </div>
     </div>
-
     <script src="{{ url_for('static', path='prizes.js') }}"></script>
     <script src="{{ url_for('static', path='roulette.js') }}"></script>
     <script>
-        // Инициализация Telegram Web App
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-
-        // Инициализация приложения после загрузки DOM
-        document.addEventListener('DOMContentLoaded', function() {
-            // Получаем ID пользователя из Telegram
-            const userId = tg.initDataUnsafe?.user?.id;
-            if (userId) {
-                // Инициализируем приложение с ID пользователя
-                initializeApp(userId);
-            } else {
-                showError("Не удалось получить ID пользователя");
-            }
-        });
-
         // Обработка результатов
         function sendResultToBot(prize) {
-            tg.sendData(JSON.stringify({
-                action: 'prize_selected',
-                prize: prize
-            }));
+            const tg = window.Telegram.WebApp;
+            if (!tg) {
+                showError("Ошибка: не удалось получить доступ к Telegram Web App");
+                return;
+            }
+            try {
+                tg.sendData(JSON.stringify({
+                    action: 'prize_selected',
+                    prize: prize
+                }));
+            } catch (error) {
+                showError("Ошибка при отправке результата: " + error.message);
+            }
         }
-
         // Интеграция с существующей логикой рулетки
         document.addEventListener('prizeSelected', function(e) {
             const prize = e.detail;
