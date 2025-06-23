@@ -3,6 +3,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 import logging
+import os
 from config import config
 
 # Настройка логирования
@@ -29,10 +30,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Определяем пути к директориям относительно текущего файла
+STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
+ASSETS_DIR = os.path.join(os.path.dirname(__file__), "assets")
+TEMPLATES_DIR = os.path.join(os.path.dirname(__file__), "templates")
+
 # Подключение статических файлов и шаблонов
-app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/assets", StaticFiles(directory="assets"), name="assets")
-templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
+templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 @app.middleware("http")
 async def add_telegram_headers(request: Request, call_next):
