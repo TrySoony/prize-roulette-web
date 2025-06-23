@@ -185,7 +185,13 @@ async function spinRoulette() {
         }
 
         const result = await data.json();
-        const wonPrize = result.won_prize;
+        // Преобразуем ответ API в формат, ожидаемый фронтендом
+        const wonPrize = {
+            name: result.name,
+            img: result.image_url,
+            starPrice: 1, // Временное решение, нужно добавить поле в API
+            description: result.description
+        };
         
         // 2. Запускаем анимацию
         const prizeCount = prizes.length;
@@ -194,10 +200,7 @@ async function spinRoulette() {
         const centerIndex = Math.floor(visibleCount / 2);
 
         // Находим индекс выигранного приза
-        const prizeIndex = prizes.findIndex(p => 
-            p.name === wonPrize.name && 
-            p.starPrice === wonPrize.starPrice
-        );
+        const prizeIndex = prizes.findIndex(p => p.name === wonPrize.name);
 
         if (prizeIndex === -1) {
             throw new Error("Сервер вернул неизвестный приз");

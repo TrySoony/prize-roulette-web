@@ -20,9 +20,11 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual Environment
-venv/
+# Environment
+.env
+.venv
 env/
+venv/
 ENV/
 
 # IDE
@@ -31,22 +33,21 @@ ENV/
 *.swp
 *.swo
 
-# Environment variables
-.env
-.env.local
+# Database
+*.db
+*.sqlite3
 
 # Logs
 *.log
-logs/
+
+# Local development
+.DS_Store
+Thumbs.db
 
 # Tests
 .coverage
 htmlcov/
 .pytest_cache/
-
-# Database
-*.db
-*.sqlite3
 
 # Alembic
 alembic.ini

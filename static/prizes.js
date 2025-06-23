@@ -26,11 +26,6 @@ const prizes = [
     starPrice: 2
   },
   {
-    name: "Кольцо верности",
-    img: "/images/bonded_ring.png",
-    starPrice: 1
-  },
-  {
     name: "Любовное зелье",
     img: "/images/love_potion.png",
     starPrice: 1

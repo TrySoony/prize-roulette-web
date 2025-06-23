@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import logging
 import os
 from config import config
+from api_routes import router as api_router
 
 # Настройка логирования
 logging.basicConfig(
@@ -20,6 +21,9 @@ app = FastAPI(
     version="1.0.0",
     debug=config.debug
 )
+
+# Подключение API маршрутов
+app.include_router(api_router)
 
 # Настройка CORS
 app.add_middleware(

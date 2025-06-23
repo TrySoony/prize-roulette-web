@@ -6,15 +6,49 @@
     <title>Prize Roulette</title>
     <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0"></script>
 </head>
 <body>
     <div class="container">
+        <h1>
+            <img src="{{ url_for('assets', path='neko_helmet.png') }}" alt="Logo" style="width: 40px; height: 40px;">
+            Крутите рулетку!
+        </h1>
+        
+        <div class="attempts-info">
+            Осталось попыток: <span id="attempts-left">0</span>
+        </div>
+
         <div class="roulette-container">
-            <div class="prize-display" id="prizeDisplay">
-                <img src="{{ url_for('assets', path='neko_helmet.png') }}" alt="Prize" id="prizeImage">
-                <h2 id="prizeName">Крутите рулетку!</h2>
+            <div class="pointer"></div>
+            <div id="roulette" class="roulette"></div>
+        </div>
+
+        <button id="spin" class="spin-button">Крутить!</button>
+        
+        <div id="error-message" class="error-message" style="display: none;"></div>
+    </div>
+
+    <!-- Модальное окно для выигрыша -->
+    <div id="win-modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <img id="win-modal-img" src="" alt="Prize">
+            <h2 id="win-modal-title"></h2>
+            <p>Стоимость: <span id="win-modal-price"></span></p>
+            <button id="win-modal-btn">Супер!</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно для информации о выводе -->
+    <div id="withdraw-info-modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <img id="withdraw-info-img" src="" alt="Prize">
+            <h2 id="withdraw-info-title"></h2>
+            <div class="info-box">
+                <p>Для получения приза напишите боту команду:</p>
+                <p><strong>/withdraw</strong></p>
             </div>
-            <button id="spinButton" class="spin-button">Крутить</button>
+            <button id="withdraw-info-btn">Понятно</button>
         </div>
     </div>
 
@@ -24,6 +58,18 @@
         // Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
         tg.expand();
+
+        // Инициализация приложения после загрузки DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            // Получаем ID пользователя из Telegram
+            const userId = tg.initDataUnsafe?.user?.id;
+            if (userId) {
+                // Инициализируем приложение с ID пользователя
+                initializeApp(userId);
+            } else {
+                showError("Не удалось получить ID пользователя");
+            }
+        });
 
         // Обработка результатов
         function sendResultToBot(prize) {

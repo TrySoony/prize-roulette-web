@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from typing import List
+from typing import List, Optional
 
 class Settings(BaseSettings):
     # Настройки сервера
@@ -8,16 +8,16 @@ class Settings(BaseSettings):
     debug: bool = False
     
     # Настройки базы данных
-    database_url: str
+    database_url: Optional[str] = None
     
     # Настройки CORS
     cors_origins: List[str] = ["*"]
     
     # Настройки безопасности
-    admin_token: str
+    admin_token: Optional[str] = None
     
     # Настройки Telegram
-    bot_token: str  # Для верификации запросов от бота
+    bot_token: Optional[str] = None  # Для верификации запросов от бота
     
     class Config:
         env_file = ".env"
