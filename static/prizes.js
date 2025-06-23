@@ -2,32 +2,32 @@
 const prizes = [
   {
     name: "Кольцо с бриллиантом",
-    img: "/images/diamond_ring.png",
+    img: "/assets/diamond_ring.png",
     starPrice: 5
   },
   {
     name: "Световой меч",
-    img: "/images/light_sword.png",
+    img: "/assets/light_sword.png",
     starPrice: 4
   },
   {
     name: "Браслет с гвоздями",
-    img: "/images/nail_bracelet.png",
+    img: "/assets/nail_bracelet.png",
     starPrice: 3
   },
   {
     name: "Пасхальное яйцо",
-    img: "/images/easter_egg.png",
+    img: "/assets/easter_egg.png",
     starPrice: 2
   },
   {
     name: "Шлем Неко",
-    img: "/images/neko_helmet.png",
+    img: "/assets/neko_helmet.png",
     starPrice: 2
   },
   {
     name: "Любовное зелье",
-    img: "/images/love_potion.png",
+    img: "/assets/love_potion.png",
     starPrice: 1
   }
 ];
