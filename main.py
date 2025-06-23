@@ -23,7 +23,7 @@ app = FastAPI(
 # Настройка CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=config.cors_origins,
+    allow_origins=["*"],  # Разрешаем все источники для Telegram
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -33,6 +33,13 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 templates = Jinja2Templates(directory="templates")
+
+@app.middleware("http")
+async def add_telegram_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["Cross-Origin-Embedder-Policy"] = "require-corp"
+    response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
+    return response
 
 @app.get("/")
 async def root(request: Request):

@@ -1,1 +1,43 @@
- 
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prize Roulette</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='style.css') }}">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="roulette-container">
+            <div class="prize-display" id="prizeDisplay">
+                <img src="{{ url_for('assets', path='neko_helmet.png') }}" alt="Prize" id="prizeImage">
+                <h2 id="prizeName">Крутите рулетку!</h2>
+            </div>
+            <button id="spinButton" class="spin-button">Крутить</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', path='prizes.js') }}"></script>
+    <script src="{{ url_for('static', path='roulette.js') }}"></script>
+    <script>
+        // Инициализация Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // Обработка результатов
+        function sendResultToBot(prize) {
+            tg.sendData(JSON.stringify({
+                action: 'prize_selected',
+                prize: prize
+            }));
+        }
+
+        // Интеграция с существующей логикой рулетки
+        document.addEventListener('prizeSelected', function(e) {
+            const prize = e.detail;
+            sendResultToBot(prize);
+        });
+    </script>
+</body>
+</html> 
