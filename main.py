@@ -6,6 +6,7 @@ import logging
 import os
 from config import config
 from api_routes import router as api_router
+from database import init_db
 
 # Настройка логирования
 logging.basicConfig(
@@ -50,6 +51,16 @@ async def add_telegram_headers(request: Request, call_next):
     response.headers["Cross-Origin-Embedder-Policy"] = "require-corp"
     response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
     return response
+
+@app.on_event("startup")
+async def startup_event():
+    """Инициализация при запуске приложения"""
+    try:
+        await init_db()
+        logger.info("Database initialized successfully")
+    except Exception as e:
+        logger.error(f"Error initializing database: {e}")
+        raise
 
 @app.get("/")
 async def root(request: Request):
